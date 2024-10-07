@@ -1,21 +1,20 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
-	r := gin.Default()
+func handler(w http.ResponseWriter, r *http.Request) {
+	router := gin.Default()
+	router.POST("/login", loginHandler)
 
-	// Login endpoint
-	r.POST("/login", loginHandler)
-
-	// Start the server
-	r.Run() // listen and serve on the default port
+	// Serve HTTP requests
+	router.ServeHTTP(w, r)
 }
 
-// Handler for login
 func loginHandler(c *gin.Context) {
 	var json struct {
 		Username string `json:"username"`
@@ -33,4 +32,9 @@ func loginHandler(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
 	}
+}
+
+func main() {
+	// The main function is still required but won't serve as an entry point for Vercel.
+	fmt.Println("This function is running on Vercel!")
 }
