@@ -1,40 +1,41 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-
-	"github.com/gin-gonic/gin"
+    "github.com/gin-gonic/gin"
+    "net/http"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	router := gin.Default()
-	router.POST("/login", loginHandler)
+// Vercel expects an exported function called "Handler"
+func Handler(w http.ResponseWriter, r *http.Request) {
+    router := gin.Default()
 
-	// Serve HTTP requests
-	router.ServeHTTP(w, r)
+    // Define the login endpoint
+    router.POST("/login", loginHandler)
+
+    // Serve the HTTP request
+    router.ServeHTTP(w, r)
 }
 
 func loginHandler(c *gin.Context) {
-	var json struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}
+    var json struct {
+        Username string `json:"username"`
+        Password string `json:"password"`
+    }
 
-	if err := c.BindJSON(&json); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+    if err := c.BindJSON(&json); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
 
-	// Replace with your predefined credentials
-	if json.Username == "admin" && json.Password == "password" {
-		c.JSON(http.StatusOK, gin.H{"status": "logged in"})
-	} else {
-		c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
-	}
+    // Replace with your predefined credentials
+    if json.Username == "admin" && json.Password == "password" {
+        c.JSON(http.StatusOK, gin.H{"status": "logged in"})
+    } else {
+        c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
+    }
 }
 
+// Main function is not required for Vercel but can be included for local testing
 func main() {
-	// The main function is still required but won't serve as an entry point for Vercel.
-	fmt.Println("This function is running on Vercel!")
+    // This won't be invoked by Vercel, but can be useful for local testing
 }
